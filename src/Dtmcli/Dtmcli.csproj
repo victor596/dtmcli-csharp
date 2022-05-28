@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.1;net5.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>net6.0</TargetFrameworks>
 		<PackageProjectUrl>https://github.com/dtm-labs/dtmcli-csharp</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/dtm-labs/dtmcli-csharp</RepositoryUrl>
 		<AssemblyName>Dtmcli</AssemblyName>
@@ -26,7 +26,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="DtmCommon" Version="1.1.2" />
+	  <ProjectReference Include="..\DtmCommon\DtmCommon.csproj" />
 	</ItemGroup>
 
 </Project>
