@@ -10,6 +10,7 @@ namespace DtmCommon
             services.AddSingleton<IDbSpecial, MysqlDBSpecial>();
             services.AddSingleton<IDbSpecial, PostgresDBSpecial>();
             services.AddSingleton<IDbSpecial, SqlServerDBSpecial>();
+            services.AddSingleton<IDbSpecial, OracleDBSpecial>();
             services.AddSingleton<DbSpecialDelegate>();
             services.AddSingleton<DbUtils>();
 

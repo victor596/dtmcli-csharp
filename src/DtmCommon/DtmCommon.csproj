@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.1;net5.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>net6.0</TargetFrameworks>
 		<PackageProjectUrl>https://github.com/catcherwong/dtmgrpc-csharp</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/catcherwong/dtmgrpc-csharp</RepositoryUrl>
 		<Description>a c# client for distributed transaction framework dtm. 分布式事务管理器dtm的c#客户端</Description>
@@ -43,6 +43,10 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\..\firewolf.core\src\FireWolf.DbContext\FireWolf.DbContext.csproj" />
 	</ItemGroup>
 
 </Project>

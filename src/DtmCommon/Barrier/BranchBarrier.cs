@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using FireWolf.Data;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Data.Common;
@@ -92,6 +93,54 @@ namespace DtmCommon
             }
         }
 
+        public async Task Call(DbContext db, Func<DbContext, Task> busiCall)
+        {
+            this.BarrierID = this.BarrierID + 1;
+            var bid = this.BarrierID.ToString().PadLeft(2, '0');
+
+
+            db.BeginTrans();
+
+            try
+            {
+                var originOp = Constant.Barrier.OpDict.TryGetValue(this.Op, out var ot) ? ot : string.Empty;
+
+                var (originAffected, oErr) = await DbUtils.InsertBarrier(db, this.TransType, this.Gid, this.BranchID, originOp, bid, this.Op);
+                var (currentAffected, rErr) = await DbUtils.InsertBarrier(db, this.TransType, this.Gid, this.BranchID, this.Op, bid, this.Op);
+
+                Logger?.LogDebug("originAffected: {originAffected} currentAffected: {currentAffected}", originAffected, currentAffected);
+
+                if (IsMsgRejected(rErr, this.Op, currentAffected))
+                    throw new DtmDuplicatedException();
+
+                var isNullCompensation = IsNullCompensation(this.Op, originAffected);
+                var isDuplicateOrPend = IsDuplicateOrPend(currentAffected);
+
+                if (isNullCompensation || isDuplicateOrPend)
+                {
+                    Logger?.LogInformation("Will not exec busiCall, isNullCompensation={isNullCompensation}, isDuplicateOrPend={isDuplicateOrPend}", isNullCompensation, isDuplicateOrPend);
+                    db.Commit();
+                    return;
+                }
+
+                try
+                {
+                    await busiCall.Invoke(db);
+                }
+                catch
+                {
+                    throw;
+                }
+                db.Commit();
+            }
+            catch (Exception ex)
+            {
+                Logger?.LogError(ex, "Call error, gid={gid}, trans_type={trans_type}", this.Gid, this.TransType);
+                db.Rollback();
+                throw;
+            }
+        }
+
         public async Task<string> QueryPrepared(DbConnection db)
         {
             try
@@ -114,6 +163,46 @@ namespace DtmCommon
             var reason = string.Empty;
 
             var sql = string.Format(QueryPreparedSqlFormat, DtmOptions.BarrierTableName);
+
+            try
+            {
+                reason = await db.QueryFirstOrDefaultAsync<string>(
+                           sql,
+                           new { gid = this.Gid, branch_id = Constant.Barrier.MSG_BRANCHID, op = Constant.TYPE_MSG, barrier_id = Constant.Barrier.MSG_BARRIER_ID });
+
+                if (reason.Equals(Constant.Barrier.MSG_BARRIER_REASON)) return Constant.ResultFailure;
+            }
+            catch (Exception ex)
+            {
+                Logger?.LogWarning(ex, "Query Prepared error, gid={gid}", this.Gid);
+                return ex.Message;
+            }
+
+            return string.Empty;
+        }
+
+        public async Task<string> QueryPrepared(DbContext db)
+        {
+            try
+            {
+                var tmp = await DbUtils.InsertBarrier(
+                    db,
+                    this.TransType,
+                    this.Gid,
+                    Constant.Barrier.MSG_BRANCHID,
+                    Constant.TYPE_MSG,
+                    Constant.Barrier.MSG_BARRIER_ID,
+                    Constant.Barrier.MSG_BARRIER_REASON);
+            }
+            catch (Exception ex)
+            {
+                Logger?.LogWarning(ex, "Insert Barrier error, gid={gid}", this.Gid);
+                return ex.Message;
+            }
+
+            var reason = string.Empty;
+
+            var sql = $"select reason from {DtmOptions.BarrierTableName} where gid= #gid# and branch_id= #branch_id# and op=#op# and barrier_id=#barrier_id#";
 
             try
             {
