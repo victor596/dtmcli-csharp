@@ -1,4 +1,5 @@
 ﻿using DtmCommon;
+using FireWolf.Data;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -47,6 +48,14 @@ namespace Dtmcli
         public async Task DoAndSubmitDB(string queryPrepared, DbConnection db, Func<DbTransaction, Task> busiCall, CancellationToken cancellationToken = default)
         {
             await this.DoAndSubmit(queryPrepared, async bb => 
+            {
+                await bb.Call(db, busiCall);
+            }, cancellationToken);
+        }
+
+        public async Task DoAndSubmitDB(string queryPrepared, DbContext db, Func<DbContext, Task> busiCall, CancellationToken cancellationToken = default)
+        {
+            await this.DoAndSubmit(queryPrepared, async bb =>
             {
                 await bb.Call(db, busiCall);
             }, cancellationToken);

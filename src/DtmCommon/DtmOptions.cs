@@ -16,7 +16,10 @@
         /// barrier table type. default mysql
         /// </summary>
         public string DBType { get; set; } = "mysql";
-
+        /// <summary>
+        /// Barrier库对应的dbcontext mapping,启用此参数将忽略DBType
+        /// </summary>
+        public string BarrierDbMapping { get; set; }
         /// <summary>
         /// barrier table name, default dtm_barrier.barrier
         /// </summary>

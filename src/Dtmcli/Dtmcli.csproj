@@ -14,6 +14,15 @@
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<BaseOutputPath>E:\Victor\Projects\MyPro\firewolf.core\bin</BaseOutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath>E:\Victor\Projects\MyPro\firewolf.core\bin</OutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputPath>E:\Victor\Projects\MyPro\firewolf.core\bin</OutputPath>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -26,6 +35,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\..\firewolf.core\src\FireWolf.Common\FireWolf.Common.csproj" />
+	  <ProjectReference Include="..\..\..\..\firewolf.core\src\FireWolf.Ioc\FireWolf.Ioc.csproj" />
 	  <ProjectReference Include="..\DtmCommon\DtmCommon.csproj" />
 	</ItemGroup>
 

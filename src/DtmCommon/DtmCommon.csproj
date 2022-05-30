@@ -11,8 +11,15 @@
 		<Authors>catcherwong</Authors>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<BaseOutputPath>E:\Victor\Projects\MyPro\firewolf.core\bin</BaseOutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath>E:\Victor\Projects\MyPro\firewolf.core\bin</OutputPath>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputPath>E:\Victor\Projects\MyPro\firewolf.core\bin</OutputPath>
+	</PropertyGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="Dtmgrpc" />
 		<InternalsVisibleTo Include="Dtmgrpc.Tests" />
